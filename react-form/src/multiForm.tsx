@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Button } from "./components/ui/button";
 import {
   Form,
   FormControl,
@@ -11,8 +11,7 @@ import {
   FormMessage,
 } from "./components/ui/form";
 
-import Echart from "./components/echart";
-import EchartManual from "./components/echartManual";
+import { cn } from "./lib/utils";
 
 type FormValues = {
   id?: number;
@@ -20,6 +19,8 @@ type FormValues = {
   name: string;
   category: string;
   categoryID: number;
+  currency: string;
+  amount: number;
   isFixedExpenses: boolean;
   isPaid: boolean;
   remarks?: string;
@@ -27,13 +28,15 @@ type FormValues = {
   createdAt?: string;
 };
 
-function App() {
+export default function MultiForm() {
   const emptyFormValues: FormValues = {
     // today date to yyyy-mm-dd
     date: new Date().toISOString().slice(0, 10),
     name: "",
     category: "",
     categoryID: 0,
+    currency: "MYR",
+    amount: 0,
     isFixedExpenses: false,
     isPaid: false,
     remarks: "",
@@ -44,9 +47,7 @@ function App() {
   });
   const onSubmit: SubmitHandler<FormValues[]> = (data) => console.log(data);
   return (
-    <main className="w-full">
-      <EchartManual />
-      <Echart />
+    <div>
       <Button
         type="button"
         onClick={() => {
@@ -58,8 +59,8 @@ function App() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           {arrFormValues.map((v, index) => (
-            <div key={index} className="flex space-x-2 mb-2">
-              <div>
+            <div key={index} className="grid grid-cols-2 gap-1 mb-2">
+              <div className="col-span-full">
                 <FormField
                   control={form.control}
                   name={`${index}.date` as const}
@@ -92,6 +93,76 @@ function App() {
                   )}
                 />
               </div>
+              <div>
+                <FormField
+                  control={form.control}
+                  name={`${index}.category` as const}
+                  defaultValue={v.category}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div>
+                <FormField
+                  control={form.control}
+                  name={`${index}.currency` as const}
+                  defaultValue={v.currency}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Currency</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div>
+                <FormField
+                  control={form.control}
+                  name={`${index}.amount` as const}
+                  defaultValue={v.amount}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Amount</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(parseFloat(e.target.value));
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div>
+                <FormField
+                  control={form.control}
+                  name={`${index}.remarks` as const}
+                  defaultValue={v.remarks}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Is Fixed</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <div>
                 <FormField
@@ -115,8 +186,6 @@ function App() {
           <Button type="submit">Submit</Button>
         </form>
       </Form>
-    </main>
+    </div>
   );
 }
-
-export default App;
