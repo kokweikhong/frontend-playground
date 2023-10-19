@@ -16,3 +16,17 @@ export interface FinanceExpensesRecord {
 
 export const getFinanceExpensesRecords = (): FinanceExpensesRecord[] =>
   mockData;
+
+export type FinanceExpensesRecordFormValues = {
+  id?: number;
+  date: string;
+  name: string;
+  categoryID: number;
+  currency: string;
+  amount: number;
+  isFixedExpenses: boolean;
+  isPaid: boolean;
+  remarks: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
